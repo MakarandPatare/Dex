@@ -15,8 +15,8 @@ struct FetchService {
     private let baseURL = URL(string: "https://pokeapi.co/api/v2/pokemon")!
     
     func fetchPokemons(_ id: Int) async throws -> FetchedPokemon {
-        let fetchURL = baseURL.appendingPathComponent("\(id)")
-//        let fetchURL = baseURL.appending(path: String(id))
+//        let fetchURL = baseURL.appendingPathComponent("\(id)")
+        let fetchURL = baseURL.appending(path: String(id))
         
         let (data, response) = try await URLSession.shared.data(from: fetchURL)
         
