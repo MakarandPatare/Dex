@@ -11,10 +11,12 @@ import CoreData
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
-    @FetchRequest(
+    @FetchRequest<Pokemon>(sortDescriptors: []) private var all
+    
+    @FetchRequest<Pokemon>(
         sortDescriptors: [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)],
         animation: .default)
-    private var pokedex: FetchedResults<Pokemon>
+    private var pokedex
     
     @State private var searchText = ""
     @State private var filterByFavorites = false
@@ -29,16 +31,17 @@ struct ContentView: View {
             predicates.append(namePredicate)
         }
         
-        // Filter by favorite predicate
+        // Filter by favorite Predicate
         if filterByFavorites {
             predicates.append(NSPredicate(format: "favorite == %d", true))
         }
         
+        // Combine Predicates
         return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
     
     var body: some View {
-        if pokedex.count < 2 {
+        if all.count < 2 {
             ContentUnavailableView {
                 Label("No Pokemon", image: .nopokemon)
             } description: {
@@ -46,7 +49,8 @@ struct ContentView: View {
             } actions: {
                 Button("Fetch Pokemon", systemImage:
                         "antenna.radiowaves.left.and.right") {
-                    getPokemon()
+                    getPokemon(from: 1)
+
                 }
                 .buttonStyle(.borderedProminent)
             }
@@ -88,9 +92,21 @@ struct ContentView: View {
                                     }
                                 }
                             }
+                            .swipeActions(edge: .leading) {
+                                Button(pokemon.favorite ? "Remove from Favorites" : "Add to Favorites", systemImage: "star") {
+                                    pokemon.favorite.toggle()
+                                    
+                                    do {
+                                        try viewContext.save()
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                                .tint(pokemon.favorite ? .gray : .yellow)
+                            }
                         }
                     } footer: {
-                        if pokedex.count < 151 {
+                        if all.count < 151 {
                             ContentUnavailableView {
                                 Label("Missing Pokemon", image: .nopokemon)
                             } description: {
@@ -130,7 +146,7 @@ struct ContentView: View {
         }
     }
     
-    private func getPokemon(from id: Int = 1) {
+    private func getPokemon(from id: Int) {
         Task {
             for i in id..<152 { // there are 151 Pokemons in first gen
                 do {
