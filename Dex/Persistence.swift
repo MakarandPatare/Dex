@@ -56,6 +56,8 @@ struct PersistenceController {
             container.persistentStoreDescriptions.first!.url = URL(
                 fileURLWithPath: "/dev/null"
             )
+        } else {
+            container.persistentStoreDescriptions.first!.url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.sampleapps.DexGroup")!.appending(path: "Dex.sqlite")
         }
         container.loadPersistentStores(completionHandler: {
             (storeDescription, error) in
