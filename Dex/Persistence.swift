@@ -17,7 +17,6 @@ struct PersistenceController {
         return try! context.fetch(request).first!
     }
 
-    @MainActor
     static let preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
