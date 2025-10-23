@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-@main
+@main @MainActor
 struct DexApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([Pokemon.self,])
