@@ -56,6 +56,7 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				Persistence.swift,
+				Pokemon.swift,
 			);
 			target = 246550662EA92C6400D9FAB9 /* DexWidgetExtension */;
 		};
